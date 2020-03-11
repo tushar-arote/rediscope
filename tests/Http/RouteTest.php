@@ -6,9 +6,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\TestResponse as LegacyTestResponse;
 use Illuminate\Testing\TestResponse;
 use Rediscope\Http\Middleware\Authorize;
-use Rediscope\Tests\FeatureTestCase;
 use Orchestra\Testbench\Http\Middleware\VerifyCsrfToken;
 use PHPUnit\Framework\Assert as PHPUnit;
+use Rediscope\Tests\FeatureTestCase;
 
 class RouteTest extends FeatureTestCase
 {

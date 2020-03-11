@@ -19,8 +19,8 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [7.2, 7.3, 7.4]
-        laravel: [^6.0, ^7.0]
+        php: [7.1, 7.2, 7.3, 7.4]
+        laravel: [^5.6, ^6.0, ^7.0]
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }}
 
@@ -42,7 +42,7 @@ jobs:
           coverage: none
 
       - name: Install dependencies
-        run: composer require "illuminate/contracts=${{ matrix.laravel }}" --prefer-dist --no-interaction --no-suggest
+        run: composer install --prefer-dist --no-interaction --no-suggest
 
       - name: Execute tests
         run: vendor/bin/phpunit --verbose
