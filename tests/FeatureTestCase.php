@@ -7,11 +7,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestResponse as LegacyTestResponse;
 use Illuminate\Queue\Queue;
 use Illuminate\Testing\TestResponse;
-use Laravel\Telescope\Contracts\EntriesRepository;
-use Laravel\Telescope\Storage\DatabaseEntriesRepository;
-use Laravel\Telescope\Storage\EntryModel;
-use Laravel\Telescope\Telescope;
-use Laravel\Telescope\TelescopeServiceProvider;
+use Rediscope\Rediscope;
+use Rediscope\RediscopeServiceProvider;
 use Orchestra\Testbench\TestCase;
 
 class FeatureTestCase extends TestCase
@@ -23,27 +20,21 @@ class FeatureTestCase extends TestCase
         parent::setUp();
 
         if (Application::VERSION === '7.x-dev' || version_compare(Application::VERSION, '7.0', '>=')) {
-            TestResponse::macro('terminateTelescope', [$this, 'terminateTelescope']);
+            TestResponse::macro('terminateRediscope', [$this, 'terminateRediscope']);
         } else {
-            LegacyTestResponse::macro('terminateTelescope', [$this, 'terminateTelescope']);
+            LegacyTestResponse::macro('terminateRediscope', [$this, 'terminateRediscope']);
         }
-
-        Telescope::flushEntries();
     }
 
     protected function tearDown(): void
     {
-        Telescope::flushEntries();
-
-        Queue::createPayloadUsing(null);
-
         parent::tearDown();
     }
 
     protected function getPackageProviders($app)
     {
         return [
-            TelescopeServiceProvider::class,
+            RediscopeServiceProvider::class,
         ];
     }
 
@@ -65,31 +56,10 @@ class FeatureTestCase extends TestCase
         $config = $app->get('config');
 
         $config->set('logging.default', 'errorlog');
-
-        $config->set('database.default', 'testbench');
-
-        $config->set('telescope.storage.database.connection', 'testbench');
-
-        $config->set('database.connections.testbench', [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-            'prefix' => '',
-        ]);
-
-        $app->when(DatabaseEntriesRepository::class)
-            ->needs('$connection')
-            ->give('testbench');
     }
 
-    protected function loadTelescopeEntries()
+    protected function loadRediscopeEntries()
     {
-        $this->terminateTelescope();
-
-        return EntryModel::all();
-    }
-
-    public function terminateTelescope()
-    {
-        Telescope::store(app(EntriesRepository::class));
+        return Rediscope::scan();
     }
 }
