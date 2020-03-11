@@ -1,11 +1,10 @@
 <?php
 
-namespace Laravel\Telescope\Tests;
+namespace Rediscope\Tests;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestResponse as LegacyTestResponse;
-use Illuminate\Queue\Queue;
 use Illuminate\Testing\TestResponse;
 use Rediscope\Rediscope;
 use Rediscope\RediscopeServiceProvider;
